@@ -46,6 +46,17 @@ fulladder a25(net[14],net[11],net[27],net[32],net[33]);
 fulladder a26(1'b0,net[29],net[30],net[34],net[35]);
 fulladder a27(net[31],net[32],net[35],net[36],net[37]);
 fulladder a28(net[15],net[33],net[37],net[38],net[39]);
+	
+	module fulladder(a,b,c,s,ca);
+
+input a,b,c;
+
+output s,ca;
+
+assign s=(a^b^c);
+assign ca=((a&b)|(b&c)|(c&a));
+endmodule 
+
 
 //output 
   
