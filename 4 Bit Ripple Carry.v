@@ -37,7 +37,8 @@ module ripple_carry_adder_tb;
 	end
 
 	initial begin
-	
+		$dumpfile("ripple-carry-adder.vcd");
+		$dumpvars(0, ripple_carry_adder_tb);
 		$monitor($time, " a= %b b= %b sum = %b cout = %b", a, b, sum, cout);
 	end
 
