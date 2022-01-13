@@ -23,6 +23,8 @@ end
 initial
 begin
   $display("Full Adder test");
+	$dumpfile("fullader.vcd");
+	$dumpvars(0, full adder);
   $monitor("[a b cin]=%b [sum cout]=%b time=%d",
 c, f, $time);
 end
