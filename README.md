@@ -1,1 +1,1 @@
-- 👋 Hi, I’m @soukalin96 and I am not a coder.
+- 👋 Hi, I’m @soukalin96 and most of the verilog codes are useless.
