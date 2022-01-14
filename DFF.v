@@ -21,14 +21,13 @@ endmodule
 
 
   //===== TB ======
-
-    module test;
+  module test;
       reg [2:0]a;
       wire [1:0]out;
       
       dff a1 (a[0],a[1],a[2],out[0],out[1]);
       
-       always #10 a[0] = ~a[0];  
+      
       
       initial begin
          $dumpfile("dump.vcd");
@@ -37,12 +36,13 @@ endmodule
 		
 	#0;          
           a = 3'b010;
-   #20;   a[1] = 1'b0;
+        #20;   a[1] = 1'b0;a[0] = 1'b0;
 
-   #20;
-	 forever #40 a[2] = ~ a[2];
-        #100 $stop;
-      end
+        forever #20 a[2] = ~ a[2];
+      end 
+	 
+      always #10 a[0] = ~a[0];
+		initial #180 $stop;
       
 
 endmodule  
