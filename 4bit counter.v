@@ -28,13 +28,15 @@ module test;
      
         $dumpfile("dump.vcd");
         $dumpvars(1);
-         $monitor($time, " clk= %b reset =%b out = %b", clk, reset, out);
+         $monitor($time, " clk= %b reset =%b out = %b", clk, res, out);
         
      clk = 0;
      res = 1;
      
      #20  res = 0;
-     #60 res = 1;
+     #80 res = 1;
      #40 res = 0;
    #20 $finish;
    end 
+  
+endmodule
