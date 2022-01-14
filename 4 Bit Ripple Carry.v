@@ -64,9 +64,9 @@ module NbitRippleCarryAdder(a, b, cin, sum, cout, N);
     generate
     for (i = 0; i < N; i = i + 1) begin
         if (i == 0)
-            FullAdder f(a[0], b[0], cin, sum[0], carry[0]);
+            full_adder f(a[0], b[0], cin, sum[0], carry[0]);
         else
-            FullAdder f(a[i], b[i], carry[i-1], s[i], carry[i]);
+            full_adder f(a[i], b[i], carry[i-1], s[i], carry[i]);
     end
 
     assign cout = carry[N-1];
