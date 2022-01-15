@@ -1,6 +1,6 @@
 //DFF
 //logic
-module dff (input d,input clk,input res,output reg q,output qn);  
+module dff (input d,clk,res,output reg q,qn);  
   always @ (posedge clk or posedge res)  
      if (res)  
          q <= 0;  
@@ -10,7 +10,7 @@ module dff (input d,input clk,input res,output reg q,output qn);
 endmodule  
 
 //Gate netlist
-module dff (input d,input clk,input res,output reg q,output qn); 
+module dff (input d,clk,res,output reg q, qn); 
 	wire  w1; wire  w2; wire  w3; wire  w4;
   reg resn;
   
