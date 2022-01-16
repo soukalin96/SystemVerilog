@@ -12,16 +12,13 @@ endmodule
 //Gate level
 module dff (input d,clk,res,output reg q, qn); 
 	wire  w1; wire  w2; wire  w3; wire  w4;
-  reg resn;
-  
-  not a1 (resn,res);
 	
-	nand n1 (w1,w4,w2);
-  nand n2 (w2,w1,clk,resn);
-	nand n3 (w3,clk,w2,w4);
-  nand n4 (w4,w3,d,resn);
-	nand n6 (q,w2,qn);
-  nand n5 (qn,q,w3,resn);
+  nand n1 (w1,w4,w2,1);
+  nand n2 (w2,w1,clk,res);
+  nand n3 (w3,clk,w2,w4);
+  nand n4 (w4,w3,d,res);
+  nand n6 (q,w2,qn,1);
+  nand n5 (qn,q,w3,res);
 	
 endmodule
 
