@@ -21,6 +21,25 @@ module nand3 (y,a,b,c);
   
 endmodule
 
+//xor
+
+module xor2 (y,a,b);
+  output y;
+  input a,b;
+  supply0 gnd;
+  supply1 vdd;
+  wire w;
+  
+  pmos p1(w,vdd,a);
+  pmos p2(y,a,b);
+  pmos p3(y,b,a);
+  
+  nmos n1(w,gnd,a);
+  nmos n2(y,w,b);
+  nmos n3(y,b,w);
+	
+endmodule
+
 //== DFF ==
 
 module dff (input d,clk,res,output reg q, qn); 
@@ -36,22 +55,47 @@ module dff (input d,clk,res,output reg q, qn);
 	
 endmodule
 
-//==3BitCounter==
+//tff
 
-module counter3bitasync ( input clk,input res,output [2:0] out);  
+module tff(input T,clk,res,output q,qn);
+wire w;
+  xor2 x1(w,T,q);
+  dff d1(w,clk,res,q,qn);
+endmodule
+
+//async down count.
+
+module c3a ( input t, clk,res,output [2:0] out);  
   
    wire  q0;wire  qn0;wire  q1;wire  qn1;wire  q2;  
    wire  qn2;
   
   // Combination Logic
-  // d_n = ~q_n , q_n = clock_(n+1) 
-  dff ff0 ( qn0, clk, res, q0, qn0);  
-  dff ff1 ( qn1, q0, res, q1, qn1);  
-  dff ff2 ( qn2, q1, res, q2, qn2);   
+  // T =1  , ~q_n = clock_(n+1) 
+  tff ff0 (t, clk, res, q0, qn0);  
+  tff ff1 (t, q0, res, q1, qn1);  
+  tff ff2 (t, q1, res, q2, qn2);  
   
-  assign out = {qn2, qn1, qn0};  
+ assign out = {q2, q1, q0};  
+
+endmodule 
+
+//sync up count.
+
+module c3s(t,clk,res,q,qb);
+input t,clk, res;
+output [3:0]q,qb;
+wire x1,x2;
   
-endmodule  
+tff T0(t,clk, res,q[0],qb[0]);
+tff T1(q[0],clk, res,q[1],qb[1]);
+and A1(x1,q[0],q[1]);
+tff T2(x1,clk, res,q[2],qb[2]);
+
+  
+endmodule
+
+//================
 
 //====================
 
@@ -59,18 +103,20 @@ endmodule
 	
   //===== TB ======
 module test;
-  reg clk;
+  reg clk,t;
   reg res;
-  wire [2:0] out;
+  wire q0,q1,q2;
+  reg [2:0]out;
+   assign out = {q2, q1, q0};  
   
-  counter3bitasync a1 ( clk, res, out);
+  c3a a1 (t, clk, res, {q2, q1, q0});
   always #5 clk = ~clk;
    initial begin
      
         $dumpfile("dump.vcd");
         $dumpvars(1);
-         $monitor($time, " clk= %b reset =%b out = %b", clk, res, out);
-        
+         $monitor($time, " clk= %b reset =%b out = %b", clk, res, {q2, q1, q0});
+      t = 1;  
      clk = 0;
      res = 0;
      
@@ -78,6 +124,7 @@ module test;
      #180 res = 0;
      #40 res = 1;
    #20 $finish;
+    
    end 
   
 endmodule
