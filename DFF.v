@@ -1,5 +1,5 @@
 //DFF
-//logic
+//behaviour
 module dff (input d,clk,res,output reg q,qn);  
   always @ (posedge clk or posedge res)  
      if (res)  
