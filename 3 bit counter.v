@@ -45,7 +45,7 @@ endmodule
 module dff (input d,clk,res,output reg q, qn); 
 	wire  w1; wire  w2; wire  w3; wire  w4;
  
-	
+	//poseedge clk negedge res//
   nand3 n1 (w1,w4,w2,1);
   nand3 n2 (w2,w1,clk,res);
   nand3 n3 (w3,clk,w2,w4);
@@ -77,6 +77,7 @@ module c3a ( input t, clk,res,output [2:0] out);
   tff ff2 (t, q1, res, q2, qn2);  
   
  assign out = {q2, q1, q0};  
+	// assign out = {qn2, qn1, qn0}; uocounter//  
 
 endmodule 
 
