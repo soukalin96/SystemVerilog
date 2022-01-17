@@ -96,6 +96,29 @@ tff T2(x1,clk, res,q[2],qb[2]);
   
 endmodule
 
+//sync up-down count. M=0 up
+
+module c3sud(t,clk,res,M,q,qb);
+input t,clk, res, M;
+  output [2:0]q,qb;
+wire w1,w2,w3, w4,w5,w6;
+  
+tff T0(t,clk, res,q[0],qb[0]);
+  and(w1,~M,q[0]);
+  and(w2,M,qb[0]);
+  or(w3,w1,w2);																						
+  
+tff T1(w3,clk, res,q[1],qb[1]);
+  and(w4,w1,q[1]);
+  and(w5,w2,qb[1]);
+  or(w6,w4,w5);
+
+tff T2(w6,clk, res,q[2],qb[2]);
+
+  
+endmodule
+
+
 //================
 
 //====================
@@ -122,6 +145,36 @@ module test;
      res = 0;
      
      #22  res = 1;
+     #180 res = 0;
+     #40 res = 1;
+   #20 $finish;
+    
+   end 
+  
+endmodule
+
+//==
+  //===== TB updwn======
+module test;
+  reg clk,t,M;
+  reg res;
+  wire q0,q1,q2;
+  reg [2:0]out;
+   assign out = {q2, q1, q0};  
+  
+  c3sud a1 (t, clk, res,M, {q2, q1, q0});
+  always #5 clk = ~clk;
+   initial begin
+     
+        $dumpfile("dump.vcd");
+        $dumpvars(1);
+         $monitor($time, " clk= %b reset =%b out = %b", clk, res, {q2, q1, q0});
+      t = 1;  
+     clk = 0;
+     res = 0;M=1;
+     
+     #22  res = 1;
+     #35 M=0;
      #180 res = 0;
      #40 res = 1;
    #20 $finish;
