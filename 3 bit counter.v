@@ -42,18 +42,23 @@ endmodule
 
 //== DFF ==
 
-module dff (input d,clk,res,output reg q, qn); 
-	wire  w1; wire  w2; wire  w3; wire  w4;
+module dff (input d,clk,res, output q, qn); 
+  
+  wire w1,w2,w3,w4;
  
-	//poseedge clk negedge res//
-  nand3 n1 (w1,w4,w2,1);
-  nand3 n2 (w2,w1,clk,res);
-  nand3 n3 (w3,clk,w2,w4);
-  nand3 n4 (w4,w3,d,res);
-  nand3 n6 (q,w2,qn,1);
-  nand3 n5 (qn,q,w3,res);
-	
+	tranif0 t1(d,w1,clk);
+	nand n1(w2,w1,res,1);
+  not(w3,w2);  
+  tranif0 t2(w3,w1,~clk);
+  
+  
+  tranif0 t3(w2,w4,~clk);
+	not i2(q,w4);
+	nand n2(qn,q,res,1);
+  tranif0 t4(qn,w4,clk);
+  
 endmodule
+
 
 //tff
 
