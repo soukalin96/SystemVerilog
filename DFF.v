@@ -22,33 +22,21 @@ module dff (input d,clk,res,output reg q, qn);
 	
 endmodule
 
-//Switch Level
+//TG design
 
-module dff (input d,clk,output q, qn); 
+
+module dff (input d,clk,res, output q, qn); 
   
   wire w1,w2,w3,w4;
-    supply0 gnd;
-	supply1 vdd;
-
-  tranif0 t1(d,w1,clk);
-
-  pmos p1(w2, vdd, w1);
-  nmos n1(w2, gnd, w1);
-  
-  pmos p2(w3, vdd, w2);
-  nmos n2(w3, gnd, w2);
-  
+ 
+	tranif0 t1(d,w1,clk);
+	nand n1(w2,w1,res,1);
+  not(w3,w2);  
   tranif0 t2(w3,w1,~clk);
   
-  
   tranif0 t3(w2,w4,~clk);
-  
-  pmos p3(q,vdd, w4);
-  nmos n3(q, gnd, w4);
-  
-  pmos p4(qn, vdd, q);
-  nmos n4(qn, gnd, q);
-  
+	not i2(q,w4);
+	nand n2(qn,q,res,1);
   tranif0 t4(qn,w4,clk);
   
 endmodule
