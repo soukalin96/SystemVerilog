@@ -26,7 +26,7 @@ dff d1(q,qn,w,clk,res);
 endmodule
 
 
-//sync up count.
+/* sync up count.
 
 module c3s(t,clk,res,q,qb);
 input t,clk, res;
@@ -38,7 +38,7 @@ tff T1(q[0],clk, res,q[1],qb[1]);
 and A1(x1,q[0],q[1]);
 tff T2(x1,clk, res,q[2],qb[2]);
   
-endmodule
+endmodule */
 
 //sync up-down count. M=0 up
 
@@ -80,61 +80,53 @@ module c3a ( input t, clk,res,output [2:0] out);
 
 endmodule */
 
-  //===== TB ======
 
-module test;
-  reg clk,t;
-  reg res;
-  wire q0,q1,q2;
-  reg [2:0]out;
-   assign out = {q2, q1, q0};  
-  
-  c3a a1 (t, clk, res, {q2, q1, q0});
-  always #5 clk = ~clk;
-   initial begin
-     
-        $dumpfile("dump.vcd");
-        $dumpvars(1);
-	   $monitor($time, " clk= %b reset =%b out = %d", clk, res, out);
-      t = 1;  
-     clk = 0;
-     res = 0;
-     
-     #22  res = 1;
-     #180 res = 0;
-     #40 res = 1;
-   #20 $finish;
-    
-   end 
-  
-endmodule
 
 //===== TB updwn======
+
 
 module test;
   reg clk,t,M;
   reg res;
   wire q0,q1,q2;
-  reg [2:0]out;
+  reg [2:0]out,qb;
    assign out = {q2, q1, q0};  
   
-  c3sud a1 (t, clk, res,M, {q2, q1, q0});
-  always #5 clk = ~clk;
+  c3sud a1 (t, clk, res,M,{q2, q1, q0},qb);
+  
+  always #10 clk = ~clk;
    initial begin
      
-        $dumpfile("dump.vcd"); $dumpvars(1);
-  
-	   $monitor($time, " clk= %b reset =%b out = %d", clk, res, out);
-      t = 1;  
-     clk = 0;
-     res = 0;M=1;
+     $dumpfile("dump.vcd"); $dumpvars(1,clk,out,res,M);
+	  $monitor($time, " clk= %b reset =%b out = %d", clk, res, out);
+     	t = 1; clk = 0;res=1;M=0;
      
-     #22  res = 1;
-     #35 M=0;
-     #180 res = 0;
-     #40 res = 1;
-   #20 $finish;
-    
+
+    #5 res_sig;    $display("Initiate UP mode");
+     
+ 
+    #151 toggle_M;   $display("Toggle to Down mode");  
+     
+   
+     #60 res_sig;   $display("Reset");
+  
    end 
   
+  // define reset task
+    task res_sig;
+    begin
+         res = 0;
+      #5 res = ~res;
+    end
+  //define up-down toggle    
+    endtask 
+    task toggle_M;
+    begin
+       M = ~M;
+    end
+    endtask 
+  
+  // total run time 
+  initial #400 $stop;
+     
 endmodule
