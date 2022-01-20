@@ -146,7 +146,49 @@ module tb;
   end
   endmodule
 
-////------
+////------NOR3----
+
+module nor3 (y,a,b,c);
+  output y;
+  input a,b,c;
+  supply0 gnd;
+  supply1 vdd;
+  wire w1,w2;
+  
+  nmos p1(y,gnd,a);
+  nmos p2(y,gnd,b);
+  nmos p3(y,gnd,c);
+  
+  pmos n1(y,w1,a);
+  pmos n2(w1,w2,b);
+  pmos n3(w2,vdd,c);
+  
+endmodule
+
+///----OR3-----
+
+
+module or3 (out,a,b,c);
+  output y;
+  input a,b,c;
+  supply0 gnd;
+  supply1 vdd;
+  wire w1,w2;
+  
+  nmos p1(y,gnd,a);
+  nmos p2(y,gnd,b);
+  nmos p3(y,gnd,c);
+  
+  pmos n1(y,w1,a);
+  pmos n2(w1,w2,b);
+  pmos n3(w2,vdd,c);
+	
+	pmos  (out, vdd, y);
+	nmos  (out, gnd, y);
+  
+endmodule
+
+//---------
   
   
   
