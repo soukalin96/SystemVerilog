@@ -1,4 +1,4 @@
-
+//generator
 class generator;
   
   rand transaction trans; //declaring trans class
