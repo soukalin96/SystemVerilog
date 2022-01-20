@@ -1,90 +1,30 @@
-// Code your design here
-
-
-
-//== NAND == 
-
-module nand3 (y,a,b,c);
-  output y;
-  input a,b,c;
-  supply0 gnd;
-  supply1 vdd;
-  wire w1,w2;
-  
-  pmos p1(y,vdd,a);
-  pmos p2(y,vdd,b);
-  pmos p3(y,vdd,c);
-  
-  nmos n1(y,w1,a);
-  nmos n2(w1,w2,b);
-  nmos n3(w2,gnd,c);
-  
-endmodule
-
-//xor
-
-module xor2 (y,a,b);
-  output y;
-  input a,b;
-  supply0 gnd;
-  supply1 vdd;
-  wire w;
-  
-  pmos p1(w,vdd,a);
-  pmos p2(y,a,b);
-  pmos p3(y,b,a);
-  
-  nmos n1(w,gnd,a);
-  nmos n2(y,w,b);
-  nmos n3(y,b,w);
-	
-endmodule
-
 //== DFF ==
 
-module dff (input d,clk,res, output q, qn); 
-  
-  wire w1,w2,w3,w4;
+module dff (output wire q, qn, input reg d,clk,res); 
+wire w1,w2,w3,w4;
  
-	tranif0 t1(d,w1,clk);
-	nand n1(w2,w1,res,1);
-  not(w3,w2);  
-  tranif0 t2(w3,w1,~clk);
+//master
+tranif0 t1(d,w1,clk);
+nand n1(w2,w1,res,1);
+not(w3,w2);  
+tranif0 t2(w3,w1,~clk);
   
-  
-  tranif0 t3(w2,w4,~clk);
-	not i2(q,w4);
-	nand n2(qn,q,res,1);
-  tranif0 t4(qn,w4,clk);
+ //slave 
+ tranif0 t3(w2,w4,~clk);
+ not i2(q,w4);
+ nand n2(qn,q,res,1);
+ tranif0 t4(qn,w4,clk);
   
 endmodule
 
+//==TFF==
 
-//tff
-
-module tff(input T,clk,res,output q,qn);
+module tff(input reg T,clk,res,output wire q,qn);
 wire w;
-  xor2 x1(w,T,q);
-  dff d1(w,clk,res,q,qn);
+xor2 x1(w,T,q);
+dff d1(q,qn,w,clk,res);
 endmodule
 
-//async down count.
-
-module c3a ( input t, clk,res,output [2:0] out);  
-  
-   wire  q0;wire  qn0;wire  q1;wire  qn1;wire  q2;  
-   wire  qn2;
-  
-  // Combination Logic
-  // T =1  , ~q_n = clock_(n+1) 
-  tff ff0 (t, clk, res, q0, qn0);  
-  tff ff1 (t, q0, res, q1, qn1);  
-  tff ff2 (t, q1, res, q2, qn2);  
-  
- assign out = {q2, q1, q0};  
-	// assign out = {qn2, qn1, qn0}; uocounter//  
-
-endmodule 
 
 //sync up count.
 
@@ -97,7 +37,6 @@ tff T0(t,clk, res,q[0],qb[0]);
 tff T1(q[0],clk, res,q[1],qb[1]);
 and A1(x1,q[0],q[1]);
 tff T2(x1,clk, res,q[2],qb[2]);
-
   
 endmodule
 
@@ -119,18 +58,30 @@ tff T1(w3,clk, res,q[1],qb[1]);
   or(w6,w4,w5);
 
 tff T2(w6,clk, res,q[2],qb[2]);
-
   
 endmodule
 
 
-//================
+/* async down count.
 
-//====================
+module c3a ( input t, clk,res,output [2:0] out);  
+  
+   wire  q0;wire  qn0;wire  q1;wire  qn1;wire  q2;  
+   wire  qn2;
+  
+  // Combination Logic
+  // T =1  , ~q_n = clock_(n+1) 
+  tff ff0 (t, clk, res, q0, qn0);  
+  tff ff1 (t, q0, res, q1, qn1);  
+  tff ff2 (t, q1, res, q2, qn2);  
+  
+ assign out = {q2, q1, q0};  
+	// assign out = {qn2, qn1, qn0}; upcounter//  
 
+endmodule */
 
-	
   //===== TB ======
+
 module test;
   reg clk,t;
   reg res;
@@ -144,7 +95,7 @@ module test;
      
         $dumpfile("dump.vcd");
         $dumpvars(1);
-         $monitor($time, " clk= %b reset =%b out = %b", clk, res, {q2, q1, q0});
+	   $monitor($time, " clk= %b reset =%b out = %d", clk, res, out);
       t = 1;  
      clk = 0;
      res = 0;
@@ -158,8 +109,8 @@ module test;
   
 endmodule
 
-//==
-  //===== TB updwn======
+//===== TB updwn======
+
 module test;
   reg clk,t,M;
   reg res;
@@ -171,9 +122,9 @@ module test;
   always #5 clk = ~clk;
    initial begin
      
-        $dumpfile("dump.vcd");
-        $dumpvars(1);
-         $monitor($time, " clk= %b reset =%b out = %b", clk, res, {q2, q1, q0});
+        $dumpfile("dump.vcd"); $dumpvars(1);
+  
+	   $monitor($time, " clk= %b reset =%b out = %d", clk, res, out);
       t = 1;  
      clk = 0;
      res = 0;M=1;
