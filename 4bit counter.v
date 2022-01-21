@@ -1,7 +1,7 @@
 //logic level
 module counter ( input clk, input res, output reg[3:0] out);
   always @ (posedge clk or posedge res) begin 
-    if (res)
+    if (!res)
       out <= 0;
     else 
       out <= out + 1;
